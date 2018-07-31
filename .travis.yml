@@ -1,0 +1,16 @@
+sudo: required
+
+language: java
+
+services:
+  - docker
+
+before_install:
+  - git clone https://github.com/PersonalHealthTrain/test.git
+  - cd test/library
+  - gradle publishToMavenLocal
+  - cd ../..
+  - gradle clean
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

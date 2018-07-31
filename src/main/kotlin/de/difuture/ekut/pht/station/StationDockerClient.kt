@@ -77,4 +77,17 @@ class StationDockerClient(private val client : DockerClient) : IDockerClient {
         val imgID = if(imageId.startsWith(prefix)) {imageId.removePrefix(prefix)} else {imageId}
         this.client.removeImage(imgID, true, false)
     }
+
+
+    override fun push(repo: DockerRepositoryName, tag: DockerTag) {
+
+        this.client.push(repo.resolveTag(tag))
+    }
+
+    override fun tag(sourceImageId: String, targetRepo: DockerRepositoryName, targetTag: DockerTag) {
+
+        this.client.tag(
+                sourceImageId,
+                targetRepo.resolveTag(targetTag))
+    }
 }

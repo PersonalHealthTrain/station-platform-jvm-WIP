@@ -15,10 +15,7 @@ class StationDockerClientTests {
 
         // Container that is used for fetching Docker Registry Notifications
         @ClassRule @JvmField
-        val REGISTRY : SingleExposedPortContainer =
-                SingleExposedPortContainer(
-                        TEST_TRAIN_REGISTRY_REPOSITORY,
-                        5000)
+        val REGISTRY  = SingleExposedPortContainer(TEST_TRAIN_REGISTRY_REPOSITORY, 5000)
 
         // Print summary commands for the container
         val printSummary = listOf("print_summary")
@@ -31,6 +28,7 @@ class StationDockerClientTests {
     private lateinit var client : StationDockerClient
 
     // Repositories in the test registry
+    private lateinit var hostPort : HostPort
     private lateinit var repo1 : DockerRepositoryName
     private lateinit var repo2 : DockerRepositoryName
     private lateinit var tag : DockerTag
@@ -39,7 +37,7 @@ class StationDockerClientTests {
     @Before
     fun before() {
 
-        val hostPort = HostPort("localhost", REGISTRY.mappedPort)
+        this.hostPort = HostPort("localhost", REGISTRY.mappedPort)
         this.client = StationDockerClient(DefaultDockerClient.fromEnv().build())
         this.repo1 = DockerRepositoryName("train_test_print_summary_1",
                 hostPort = hostPort)
@@ -54,6 +52,17 @@ class StationDockerClientTests {
         this.client.close()
     }
 
+    //////////////////////////////////////// HELPER FUNCTION  ////////////////////////////////////////////////
+
+    // Pulls image from remote repository, applies the block and deletes the image again
+    private fun <T> withRemoteImage(repo : DockerRepositoryName,  tag : DockerTag,  block : (String) -> T ) : T {
+
+        val imageId = this.client.pull(repo, tag)
+        val result = block(imageId)
+        this.client.rmi(imageId, true)
+        return result
+    }
+
 
     //////////////////////////////////////// PULL ////////////////////////////////////////////////////////////
 
@@ -62,32 +71,51 @@ class StationDockerClientTests {
     @Test
     fun pull_rm() {
 
-        // Images
-        val image1 = this.client.pull(repo1, this.tag)
-        val image2 = this.client.pull(repo2, this.tag)
-
-        this.client.rmi(image1, force = true)
-        this.client.rmi(image2, force = true)
+        withRemoteImage(repo1, tag) {}
+        withRemoteImage(repo2, tag) {}
     }
 
 
     @Test
     fun run_rm() {
 
-        // Images
-        val image1 = this.client.pull(repo1, this.tag)
-        val image2 = this.client.pull(repo2, this.tag)
 
-        val output1 = this.client.run(image1, printSummary, true, timeout)
-        val output2 = this.client.run(image2, printSummary, true, timeout)
+        withRemoteImage(repo1, tag) {
 
-        // Assert that the test summary trains have produced the correct output
-        Assert.assertEquals("TEST_PRINT_SUMMARY_1\n", output1.stdout)
-        Assert.assertEquals("TEST_PRINT_SUMMARY_2\n", output2.stdout)
+            val output1 = this.client.run(it, printSummary, true, timeout)
+            Assert.assertEquals("TEST_PRINT_SUMMARY_1\n", output1.stdout)
+        }
 
-        // Assert that the test Train
-        this.client.rmi(image1, force = true)
-        this.client.rmi(image2, force = true)
+        withRemoteImage(repo2, tag) {
+
+            val output2 = this.client.run(it, printSummary, true, timeout)
+            Assert.assertEquals("TEST_PRINT_SUMMARY_2\n", output2.stdout)
+        }
     }
+
+
+    //////////////////////////////////////// TAG  ////////////////////////////////////////////////////////////
+    @Test
+    fun tag_push() {
+
+        val pushTag = DockerTag("latest")
+
+        withRemoteImage(this.repo1, this.tag) {
+
+            val name = DockerRepositoryName("testtag", hostPort = this.hostPort)
+            this.client.tag(it, name, pushTag)
+            this.client.push(name, pushTag)
+        }
+
+        withRemoteImage(this.repo2, this.tag) {
+
+            val name = DockerRepositoryName("testtag", hostPort = this.hostPort)
+            this.client.tag(it, name, pushTag)
+            this.client.push(name, pushTag)
+        }
+
+    }
+
+
 
 }

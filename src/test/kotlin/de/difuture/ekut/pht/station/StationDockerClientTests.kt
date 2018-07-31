@@ -5,6 +5,7 @@ import de.difuture.ekut.pht.lib.common.docker.DockerRepositoryName
 import de.difuture.ekut.pht.lib.common.docker.DockerTag
 import de.difuture.ekut.pht.lib.common.docker.HostPort
 import de.difuture.ekut.pht.test.lib.SingleExposedPortContainer
+import de.difuture.ekut.pht.test.lib.TEST_TRAIN_REGISTRY_REPOSITORY
 import org.junit.*
 
 
@@ -16,7 +17,7 @@ class StationDockerClientTests {
         @ClassRule @JvmField
         val REGISTRY : SingleExposedPortContainer =
                 SingleExposedPortContainer(
-                        "lukaszimmermann/pht-test-train-registry:latest",
+                        TEST_TRAIN_REGISTRY_REPOSITORY,
                         5000)
 
         // Print summary commands for the container

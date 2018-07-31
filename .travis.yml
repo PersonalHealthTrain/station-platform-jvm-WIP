@@ -7,9 +7,13 @@ services:
 
 before_install:
   - git clone https://github.com/PersonalHealthTrain/test.git
+  - git clone https://github.com/PersonalHealthTrain/library.git
   - cd test/library
   - gradle publishToMavenLocal
   - cd ../..
+  - cd library
+  - gradle publishToMavenLocal
+  - cd ..
   - gradle clean
 
 after_success:

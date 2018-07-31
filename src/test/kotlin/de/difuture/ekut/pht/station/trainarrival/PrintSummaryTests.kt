@@ -1,16 +1,18 @@
-package de.difuture.ekut.pht.station
+package de.difuture.ekut.pht.station.trainarrival
 
 import com.spotify.docker.client.DefaultDockerClient
 import de.difuture.ekut.pht.lib.registry.docker.DockerRegistryClient
 import de.difuture.ekut.pht.lib.registry.train.TrainRegistryClient
 import de.difuture.ekut.pht.lib.registry.train.arrival.TrainId
 import de.difuture.ekut.pht.lib.registry.train.arrival.tag.TrainTag
+import de.difuture.ekut.pht.station.GetRestClientImpl
+import de.difuture.ekut.pht.station.StationDockerClient
 import de.difuture.ekut.pht.test.lib.SingleExposedPortContainer
 import de.difuture.ekut.pht.test.lib.TEST_TRAIN_REGISTRY_REPOSITORY
 import org.junit.*
 
 
-class TrainArrivalTests {
+class PrintSummaryTests {
 
     companion object {
 

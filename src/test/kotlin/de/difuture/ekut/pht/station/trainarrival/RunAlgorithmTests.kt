@@ -17,7 +17,7 @@ import org.junit.*
  *  Performs tests for the check_requirements function of trains
  *
  */
-class CheckRequirementsTests {
+class RunAlgorithmTests {
 
     companion object {
 
@@ -26,14 +26,8 @@ class CheckRequirementsTests {
         @JvmField
         val REGISTRY = SingleExposedPortContainer(TEST_TRAIN_REGISTRY_REPOSITORY, 5000)
 
-        private const val trainPrefix = "train_test_check_requirements_status_"
-
-        private val repo1 = TrainId("${trainPrefix}0")
-        private val repo2 = TrainId("${trainPrefix}1")
-        private val repo3 = TrainId("${trainPrefix}2")
-
         // Count Rows Train
-        private val repo4 = TrainId("train_test_count_rows")
+        private val repo1 = TrainId("train_test_count_rows")
     }
 
     /////////////////////////  The registry trainRegistryClient  /////////////////////////////////////////////////////////////
@@ -58,36 +52,14 @@ class CheckRequirementsTests {
 
     /////////////////////////  Tests  /////////////////////////////////////////////////////////////
 
-
-
     /**
      * Checks whether the trains under test can actually be retrieved from the train registry
      */
     @Test
-    fun get_check_requirements() {
+    fun get_run_algorithm() {
 
         listOf(
-                arrivalOf(repo1),
-                arrivalOf(repo2),
-                arrivalOf(repo3),
-                arrivalOf(repo4)
+                arrivalOf(repo1)
         ).forEach(Assert::assertNotNull)
-    }
-
-    @Test
-    fun execute_check_requirements() {
-
-        // maps the check requirements train to the expected status code
-        mapOf(
-                arrivalOf(repo1) to true,
-                arrivalOf(repo2) to false,
-                arrivalOf(repo3) to false,
-                arrivalOf(repo4) to true
-
-        ).forEach { (arrival, expected) ->
-
-            arrival?.let { Assert.assertEquals(expected, it.checkRequirements(dockerClient, 5)) }
-                    ?: Assert.fail("Arrival is null")
-        }
     }
 }

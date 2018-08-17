@@ -5,8 +5,7 @@ import de.difuture.ekut.pht.lib.registry.docker.DockerRegistryClient
 import de.difuture.ekut.pht.lib.registry.train.TrainRegistryClient
 import de.difuture.ekut.pht.lib.registry.train.arrival.ITrainArrival
 import de.difuture.ekut.pht.lib.runtime.IDockerClient
-import de.difuture.ekut.pht.station.GetRestClientImpl
-import de.difuture.ekut.pht.station.StationDockerClient
+import de.difuture.ekut.pht.station.HttpGetClientImpl
 import de.difuture.ekut.pht.station.arrivalFromClient
 import de.difuture.ekut.pht.lib.registry.train.TrainId
 import de.difuture.ekut.pht.test.lib.SingleExposedPortContainer
@@ -40,7 +39,7 @@ class PrintSummaryTests {
     @Before fun before() {
 
         this.trainRegistryClient = TrainRegistryClient(
-                DockerRegistryClient(REGISTRY.getExternalURI(), GetRestClientImpl())
+                DockerRegistryClient(REGISTRY.getExternalURI(), HttpGetClientImpl())
         )
         this.dockerClient = StationDockerClient(DefaultDockerClient.fromEnv().build())
         this.arrivalOf = arrivalFromClient(this.trainRegistryClient)

@@ -1,7 +1,7 @@
 package de.difuture.ekut.pht.station
 
-import de.difuture.ekut.pht.lib.http.GetRestClient
-import de.difuture.ekut.pht.lib.http.RestHttpResponse
+import de.difuture.ekut.pht.lib.http.IHttpGetClient
+import de.difuture.ekut.pht.lib.http.IHttpResponse
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 import java.net.URI
@@ -13,13 +13,15 @@ import java.net.URI
  * @author Lukas Zimmermann
  *
  */
-class GetRestClientImpl : GetRestClient {
+class HttpGetClientImpl : IHttpGetClient {
 
-    override fun get(uri: URI): RestHttpResponse {
+    override fun get(uri: URI): IHttpResponse {
 
         val response = RestTemplate().getForEntity<String>(uri)
-        return object :RestHttpResponse {
 
+        return object :IHttpResponse {
+
+            override val statusCode = response.statusCode.value()
             override val body = response.body?.let { it } ?: ""
         }
     }

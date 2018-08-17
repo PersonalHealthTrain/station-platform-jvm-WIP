@@ -52,9 +52,6 @@ dependencies {
     compile group: 'org.glassfish.jersey.bundles.repackaged', name: 'jersey-guava', version: '2.25.1'
     compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.27'
 
-    // Docker Client implementation that we are gonna use for this station implementation
-    compile 'com.spotify:docker-client:8.11.7'
-
     // Kotlin stuff
     compile('com.fasterxml.jackson.module:jackson-module-kotlin')
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -64,8 +61,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
 
-    // The JVM PHT library
-    compile group: 'de.difuture.ekut.pht', name: 'library', version: '0.0.1-SNAPSHOT'
+    // The Docker client implementation
+    compile group: 'de.difuture.ekut.pht', name: 'docker-client-implementation', version: '0.0.1-SNAPSHOT'
 
     // Runtime dependency on H2
     runtime('com.h2database:h2')

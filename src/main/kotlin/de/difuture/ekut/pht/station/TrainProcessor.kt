@@ -68,14 +68,17 @@ class TrainProcessor
         try {
 
             val departure =  arrival.runAlgorithm(this.dockerClient, this.runInfo)
+
+            // TODO Audit
+            // Push the departure back
+            this.trainRegistry.push(departure)
+
         } catch (ex : RunAlgorithmFailed) {
 
+            // TODO Implement error handling here
             println(ex.ontainerOutput)
         }
-
-
     }
-
 
     @Scheduled(fixedDelay = 3000L)
     fun processImmediateTags() {

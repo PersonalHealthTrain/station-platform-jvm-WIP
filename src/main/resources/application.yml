@@ -1,10 +1,11 @@
 
 station:
+
   name: station1
   id: 1
+
   resources:
     PHT_RESOURCE_FHIR_DSTU3: http://142.93.105.33:8080/baseDstu3
-
 
   registry:
     uri: http://193.196.20.88:5000

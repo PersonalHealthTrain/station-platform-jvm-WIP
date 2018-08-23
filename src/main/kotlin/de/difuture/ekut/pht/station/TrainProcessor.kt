@@ -62,8 +62,7 @@ class TrainProcessor
     private fun processTrainArrival(arrival: IDockerTrainArrival) {
 
         // First, store the train arrival in the database of currently being processed arrivals
-        this.repository.save(TrainArrivalBeingProcessed(0, arrival.trainId))
-
+        val processedArrivalId = this.repository.save(TrainArrivalBeingProcessed(0, arrival.trainId)).id
         //
         try {
 
@@ -77,6 +76,9 @@ class TrainProcessor
 
             // TODO Implement error handling here
             println(ex.ontainerOutput)
+
+            // This will result in an automatic retry we the Algorithm failed
+            this.repository.deleteById(processedArrivalId)
         }
     }
 

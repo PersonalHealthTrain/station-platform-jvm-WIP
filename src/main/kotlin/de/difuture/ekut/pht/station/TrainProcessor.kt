@@ -77,19 +77,25 @@ class TrainProcessor
             // TODO Implement error handling here
             println(ex.ontainerOutput)
 
+            // Remove the failed contaier
+            this.dockerClient.rm(ex.ontainerOutput.containerId)
+
             // This will result in an automatic retry we the Algorithm failed
             this.repository.deleteById(processedArrivalId)
         }
     }
 
-    @Scheduled(fixedDelay = 3000L)
+    @Scheduled(fixedDelay = 10000L)
     fun processImmediateTags() {
 
         // Process all the train arrivals that the station sees in the train registry
-        trainRegistry.listTrainArrivals(ModeTrainTag.IMMEDIATE).forEach { arrival ->
+        val arrivals = trainRegistry.listTrainArrivals(ModeTrainTag.IMMEDIATE)
+        println(arrivals)
+        arrivals.forEach { arrival ->
 
             if (!hasBeenProcessed(arrival) && !isCurrentlyBeingProcessed(arrival) ) {
 
+                println(arrival)
                 this.processTrainArrival(arrival)
             }
         }

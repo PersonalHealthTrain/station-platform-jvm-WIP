@@ -12,6 +12,6 @@ station:
 
   registry:
     uri: http://193.196.20.88:9191
-    namespace: admin
+    namespace: personalhealthtrain
     username: lukaszimmermann
     password: adminpassword

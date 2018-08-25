@@ -17,7 +17,7 @@ import de.difuture.ekut.pht.station.persistence.TrainArrivalsBeingProcessedRepos
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-
+import kotlinx.coroutines.experimental.*
 
 @Service
 class TrainProcessor
@@ -59,11 +59,8 @@ class TrainProcessor
     }
 
 
-    private fun processTrainArrival(arrival: IDockerTrainArrival) {
+    private suspend fun processTrainArrival(arrival: IDockerTrainArrival, id: Int) {
 
-        // First, store the train arrival in the database of currently being processed arrivals
-        val processedArrivalId = this.repository.save(TrainArrivalBeingProcessed(0, arrival.trainId)).id
-        //
         try {
 
             val departure =  arrival.runAlgorithm(this.dockerClient, this.runInfo)
@@ -81,24 +78,26 @@ class TrainProcessor
             this.dockerClient.rm(ex.ontainerOutput.containerId)
 
             // This will result in an automatic retry we the Algorithm failed
-            this.repository.deleteById(processedArrivalId)
+            this.repository.deleteById(id)
         }
     }
 
-    @Scheduled(fixedDelay = 10000L)
+    @Scheduled(fixedDelay = 5000L)
     fun processImmediateTags() {
+        
+         // Process all the train arrivals that the station sees in the train registry
+         val arrivals = trainRegistry
+                         .listTrainArrivals(ModeTrainTag.IMMEDIATE)
+                         .filter {  !hasBeenProcessed(it) && !isCurrentlyBeingProcessed(it) }
+                         .map { Pair(it, repository.save(TrainArrivalBeingProcessed(0, it.trainId)).id ) }
 
-        // Process all the train arrivals that the station sees in the train registry
-        val arrivals = trainRegistry.listTrainArrivals(ModeTrainTag.IMMEDIATE)
-        println(arrivals)
-        arrivals.forEach { arrival ->
+         arrivals.map { (arrival, id) ->
 
-            if (!hasBeenProcessed(arrival) && !isCurrentlyBeingProcessed(arrival) ) {
+         	launch(CommonPool) {
 
-                println(arrival)
-                this.processTrainArrival(arrival)
-            }
-        }
+         		 processTrainArrival(arrival, id)
+         	}
+         }
     }
 
 

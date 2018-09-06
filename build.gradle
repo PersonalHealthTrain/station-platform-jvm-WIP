@@ -102,7 +102,10 @@ artifacts {
 
 
 dependencies {
-
+    
+    // Support for coroutines
+    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.25.0'
+    
     // This is required to make the Spotify Docker client work. see:
     // https://github.com/spotify/docker-client/issues/1030
     compile group: 'org.glassfish.jersey.bundles.repackaged', name: 'jersey-guava', version: '2.25.1'

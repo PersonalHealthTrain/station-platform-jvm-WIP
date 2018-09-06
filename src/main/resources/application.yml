@@ -1,3 +1,6 @@
+server:
+  port: 9292
+
 station:
 
   name: station1

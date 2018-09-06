@@ -99,8 +99,6 @@ artifacts {
     archives javadocJar
 }
 
-
-
 dependencies {
     
     // Support for coroutines

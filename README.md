@@ -21,6 +21,12 @@ For this, the station checks whether there already is an image with the station 
     * If not 0: The station deletes the failed container and forgets about it.
 
 
+
+A graphic version of the flow can be seen here:
+```
+https://drive.google.com/file/d/1i_z3DhwUW5ea-9FlSvARpiL9rAEhCzhx/view?usp=sharing
+```
+
 # Installation
 
 The Station can be installed either from source or as an pre-built artifact.

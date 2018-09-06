@@ -1,7 +1,6 @@
 package de.difuture.ekut.pht.station.persistence
 
-import de.difuture.ekut.pht.lib.registry.train.id.ITrainId
-import de.difuture.ekut.pht.station.persistence.TrainArrivalBeingProcessed
+import de.difuture.ekut.pht.lib.train.id.ITrainId
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface TrainArrivalsBeingProcessedRepository : JpaRepository<TrainArrivalBeingProcessed, Int> {

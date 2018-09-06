@@ -17,16 +17,16 @@ plugins {
     id "org.jetbrains.kotlin.plugin.jpa" version "1.2.61"
 }
 
+apply plugin: 'maven-publish'
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-spring'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'jacoco'
 
 
 group = 'de.difuture.ekut.pht'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 sourceCompatibility = 1.8
 
 
@@ -45,8 +45,60 @@ compileTestKotlin {
 
 repositories {
 	mavenCentral()
-    mavenLocal()
+	// The Artifactory for the PHT project
+	maven {
+		url "https://artifactory.difuture.de/pht"
+	}
+	// That is where the JDregistry is currently hosted
+	maven {
+		url  "https://dl.bintray.com/lukaszimmermann/jdregistry"
+	}
 }
+
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            version '0.0.1'
+            pom.withXml {
+                asNode().dependencies.'*'.findAll() {
+                    it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
+                        dep.name == it.artifactId.text()
+                    }
+                }.each() {
+                    it.scope*.value = 'compile'
+                }
+            }
+        }
+    }
+}
+
+model {
+    tasks.generatePomFileForMavenPublication {
+        destination = file("$buildDir/libs/station-0.0.1.pom")
+    }
+}
+
+/*
+ * Enable source and javadoc for Maven publish
+ */
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
 
 
 dependencies {
@@ -66,22 +118,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
 
     // The Docker client implementation
-    compile group: 'de.difuture.ekut.pht', name: 'docker-client-implementation', version: '0.0.1-SNAPSHOT'
+    compile group: 'de.difuture.ekut.pht', name: 'docker-client-implementation', version: '0.0.1'
 
     // Runtime dependency on H2
     runtime('com.h2database:h2')
-
-    // Test stuff
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile group: 'de.difuture.ekut.pht.test', name: 'library', version: '0.0.1-SNAPSHOT'
 }
-
-
-jacocoTestReport {
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
-}
-
-check.dependsOn jacocoTestReport

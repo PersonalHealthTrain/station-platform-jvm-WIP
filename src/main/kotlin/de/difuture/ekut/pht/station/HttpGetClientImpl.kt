@@ -1,9 +1,7 @@
 package de.difuture.ekut.pht.station
 
-import de.difuture.ekut.pht.lib.http.HttpHeader
-import de.difuture.ekut.pht.lib.http.HttpStatusCode
-import de.difuture.ekut.pht.lib.http.IHttpGetClient
-import de.difuture.ekut.pht.lib.http.IHttpResponse
+import jdregistry.client.http.IHttpGetClient
+import jdregistry.client.http.IHttpResponse
 import org.springframework.http.*
 import org.springframework.web.client.RestTemplate
 import java.net.URI
@@ -35,15 +33,13 @@ class HttpGetClientImpl : IHttpGetClient {
         }
     }
 
-
-    override fun get(uri: URI, httpHeaders: Map<HttpHeader, String>?): IHttpResponse {
+    override fun get(uri: URI, authorization: String?): IHttpResponse {
 
         val headers = HttpHeaders()
 
-        // If HttpHeaders have been passed, then they need to be set on the headers
-        httpHeaders?.let {
+        if (authorization != null) {
 
-            headers.setAll(it.mapKeys { x -> x.key.repr })
+            headers.set("Authorization", authorization)
         }
 
         val response = this.restTemplate.exchange(
@@ -52,13 +48,10 @@ class HttpGetClientImpl : IHttpGetClient {
                 HttpEntity<String>(headers),
                 String::class.java)
 
-        val statusCode = HttpStatusCode.of(response.statusCode.value())
-                ?: throw IllegalStateException("Unknown Status Code")
-
         return object : IHttpResponse {
 
-            override val headers = response.headers
-            override val statusCode = statusCode
+            override val authenticate = response.headers.get("WWW-Authenticate")
+            override val statusCode = response.statusCode.value()
             override val body = response.body?.let { it } ?: ""
         }
     }

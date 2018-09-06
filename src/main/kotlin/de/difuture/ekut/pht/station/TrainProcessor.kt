@@ -1,19 +1,19 @@
 package de.difuture.ekut.pht.station
 
 import com.spotify.docker.client.DefaultDockerClient
-import de.difuture.ekut.pht.lib.registry.docker.BasicAuth
-import de.difuture.ekut.pht.lib.registry.docker.DefaultDockerRegistryClient
-import de.difuture.ekut.pht.lib.registry.train.DefaultTrainRegistryClient
-import de.difuture.ekut.pht.lib.registry.train.RunAlgorithmFailed
-import de.difuture.ekut.pht.lib.registry.train.api.IDockerTrainArrival
-import de.difuture.ekut.pht.lib.registry.train.api.RunInfo
-import de.difuture.ekut.pht.lib.registry.train.tag.ITrainTag
-import de.difuture.ekut.pht.lib.registry.train.tag.ModeTrainTag
 import de.difuture.ekut.pht.lib.runtime.docker.DockerRunClient
+import de.difuture.ekut.pht.lib.train.DefaultTrainRegistryClient
+import de.difuture.ekut.pht.lib.train.RunAlgorithmFailed
+import de.difuture.ekut.pht.lib.train.api.IDockerTrainArrival
+import de.difuture.ekut.pht.lib.train.api.RunInfo
+import de.difuture.ekut.pht.lib.train.tag.ITrainTag
+import de.difuture.ekut.pht.lib.train.tag.ModeTrainTag
 import de.difuture.ekut.pht.station.persistence.TrainArrivalBeingProcessed
 import de.difuture.ekut.pht.station.props.StationProperties
 import de.difuture.ekut.pht.station.props.StationRegistryProperties
 import de.difuture.ekut.pht.station.persistence.TrainArrivalsBeingProcessedRepository
+import jdregistry.client.Authenticate
+import jdregistry.client.DockerRegistryGetClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -29,10 +29,14 @@ class TrainProcessor
 
     // The train Registry that this station uses
     private val trainRegistry = DefaultTrainRegistryClient(
-            DefaultDockerRegistryClient(
-                    registryProps.uri,
+            DockerRegistryGetClient.of(
+                    registryProps.uri.host,
+                    registryProps.uri.port,
                     HttpGetClientImpl(),
-                    BasicAuth(registryProps.username, registryProps.password)), registryProps.namespace)
+                    Authenticate.with(registryProps.username, registryProps.password)),
+            registryProps.namespace)
+
+
 
     // The TrainTag that the station will use to check in processed trains
     private val stationTag = ITrainTag.of(stationProps.id)

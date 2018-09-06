@@ -1,11 +1,9 @@
-
 station:
 
   name: station1
   id: 1
 
   listeners:
-    - http://localhost:3000/stations/ping
 
   resources:
     PHT_RESOURCE_FHIR_DSTU3: http://142.93.105.33:8080/baseDstu3

@@ -1,6 +1,6 @@
 package de.difuture.ekut.pht.station.persistence
 
-import de.difuture.ekut.pht.lib.registry.train.id.ITrainId
+import de.difuture.ekut.pht.lib.train.id.ITrainId
 import javax.persistence.AttributeConverter
 
 class ITrainIdConverter : AttributeConverter<ITrainId, String> {

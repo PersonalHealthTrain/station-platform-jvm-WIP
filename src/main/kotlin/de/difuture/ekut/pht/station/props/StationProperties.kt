@@ -13,6 +13,4 @@ class StationProperties {
     lateinit var name: String
 
     lateinit var resources: Map<String, String>
-
-    lateinit var listeners: List<URI>
 }

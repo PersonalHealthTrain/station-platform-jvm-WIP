@@ -4,15 +4,14 @@ server:
 station:
 
   name: station1
-  id: 1
-
-  listeners:
+  id: 0
 
   resources:
     PHT_RESOURCE_FHIR_DSTU3: http://142.93.105.33:8080/baseDstu3
+    PHT_FILE_DOWNLOAD_SERVICE: http://file_download_service_0
 
   registry:
-    uri: http://193.196.20.88:9191
-    namespace: personalhealthtrain
-    username: lukaszimmermann
-    password: adminpassword
+    uri: http://134.2.9.126:5000
+    namespace: namespace
+    username: lukas
+    password: testpass

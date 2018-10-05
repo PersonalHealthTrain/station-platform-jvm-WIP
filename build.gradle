@@ -100,7 +100,7 @@ artifacts {
 }
 
 dependencies {
-    
+
     // This is required to make the Spotify Docker client work. see:
     // https://github.com/spotify/docker-client/issues/1030
     compile group: 'org.glassfish.jersey.bundles.repackaged', name: 'jersey-guava', version: '2.25.1'
@@ -117,8 +117,11 @@ dependencies {
     compileOnly('org.springframework.boot:spring-boot-configuration-processor')
 
     // The PHT API and the Docker client implementation based on the Spotify client that we want to use
-    compile group: 'de.difuture.ekut.pht.lib', name: 'api', version: '0.0.8'
+    compile group: 'de.difuture.ekut.pht.lib', name: 'api', version: '0.0.9'
     compile group: 'de.difuture.ekut.pht.lib', name: 'runtime-docker-spotify', version: '0.0.4'
+
+    // The HttpClient that we use for the Docker Registry
+    compile group: 'jdregistry.client', name: 'http-spring', version: '0.0.6'
 
     // Runtime dependency on H2
     runtime('com.h2database:h2')

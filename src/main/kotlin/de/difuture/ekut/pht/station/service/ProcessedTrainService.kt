@@ -12,9 +12,20 @@ import org.springframework.stereotype.Service
 class ProcessedTrainService
 @Autowired constructor(private val repo: ProcessedTrainRepository) {
 
-    fun getState(trainId: TrainId, trainTag: TrainTag): ProcessedTrain.TrainState? {
+    /**
+     * Ensures that the train is present in the repository.
+     * If the train does not exist, it will be created with the BEFORE State
+     *
+     */
+    fun ensure(trainId: TrainId, trainTag: TrainTag) {
 
-        val train = ProcessedTrain.ProcessedTrainId(trainId, trainTag)
-        return repo.findById(train).orElse(null)?.state
+        val processedTrainId = ProcessedTrain.ProcessedTrainId(trainId, trainTag)
+
+        if ( ! repo.findById(processedTrainId).isPresent) {
+
+            repo.save(ProcessedTrain(processedTrainId, ProcessedTrain.TrainState.BEFORE))
+        }
     }
+
+    fun list() = repo.findAll()
 }

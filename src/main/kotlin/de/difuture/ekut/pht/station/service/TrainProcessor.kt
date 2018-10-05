@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class TrainProcessor
-@Autowired constructor(props: StationProperties, registryProps: StationRegistryProperties) {
+@Autowired constructor(
+        props: StationProperties,
+        registryProps: StationRegistryProperties,
+        private val service: ProcessedTrainService) {
 
 
     private val registry = DefaultTrainRegistryClient(
@@ -31,17 +34,26 @@ class TrainProcessor
     private val trainTag = TrainTag.of("station.${props.id}")
 
 
-    /*
-       Periodically list trains arrivals and filter for those that we are interested in.
+    /**
+     * Synchronizes remote Train Arrivals
+     *
      */
-    @Scheduled(fixedDelay = 2000)
-    fun processTrainArrivals() {
+    @Scheduled(fixedDelay = 5000)
+    fun syncTrainArrivals() {
 
         registry
                 .listTrainArrivals {it.trainTag == this.trainTag}
                 .forEach { arrival ->
 
-                    trains.add
+                    service.ensure(arrival.trainId, arrival.trainTag)
                 }
     }
+
+
+    @Scheduled(fixedDelay = 1000)
+    fun scheduleTrainExecution() {
+
+        println(service.list())
+    }
+
 }

@@ -1,6 +1,8 @@
 package de.difuture.ekut.pht.station.service
 
 import de.difuture.ekut.pht.lib.train.TrainTag
+import de.difuture.ekut.pht.lib.train.api.StationInfo
+import de.difuture.ekut.pht.lib.train.api.execution.docker.RunAlgorithm
 import de.difuture.ekut.pht.lib.train.registry.DefaultTrainRegistryClient
 import de.difuture.ekut.pht.station.props.StationProperties
 import de.difuture.ekut.pht.station.props.StationRegistryProperties
@@ -17,18 +19,36 @@ class TrainProcessor
 @Autowired constructor(
         props: StationProperties,
         registryProps: StationRegistryProperties,
-        private val service: ProcessedTrainService) {
-
-
-    private val registry = DefaultTrainRegistryClient(
-            DockerRegistryGetClient.of(
-                    registryProps.uri,
-                    SpringHttpGetClient(),
-                    Authenticate.with(registryProps.username,  registryProps.password)), registryProps.namespace)
+        private val service: LocalTrainService,
+        clientProvider: DockerClientProvider) {
 
 
     /**
-     * Expected ProcessedTrain Tag. This station will execute all the train arrivals with the
+     * The Remote Registry that the Train Processor contacts
+     */
+    private val registry = DefaultTrainRegistryClient(
+            dockerRegistryClient = DockerRegistryGetClient.of(
+                    registryProps.uri,
+                    SpringHttpGetClient(),
+                    Authenticate.with(registryProps.username,  registryProps.password)),
+            namespace = registryProps.namespace)
+
+    /**
+     * The Docker Client that the Docker Registy uses
+     */
+    private val docker = clientProvider.getDockerClient()
+
+
+    /**
+     * The station info that the station will communicate to the train.
+     * TODO Currently the train mode IMMEDIATE is always assumed
+     */
+    private val stationInfo = StationInfo(
+            props.id.toInt(), TrainTag.IMMEDIATE
+    )
+
+    /**
+     * Expected LocalTrain Tag. This station will execute all the train arrivals with the
      * designated train tag
      */
     private val trainTag = TrainTag.of("station.${props.id}")
@@ -49,11 +69,29 @@ class TrainProcessor
                 }
     }
 
-
     @Scheduled(fixedDelay = 1000)
-    fun scheduleTrainExecution() {
+    fun processTrain() {
 
-        println(service.list())
+        val nextTrain = service.getTrainForProcessing()
+        if (nextTrain != null) {
+
+            val id = nextTrain.id
+            // Find the corresponding train arrival again in the registy
+            val trainArrival = registry
+                    .listTrainArrivals {  it.trainId == id.trainId && it.trainTag == id.trainTag }
+                    .singleOrNull()
+
+            // Execute the train arrival if exaclty one has been found
+            if (trainArrival != null) {
+
+                val outputSupplier = RunAlgorithm.execArrival(trainArrival, docker, stationInfo)
+
+                // We are interested in both the DockerContainer Output and the RunAlgorithmResponse
+                val dockerContainerOutput = outputSupplier.output
+                val runAlgorithmResponse = outputSupplier.get()
+
+                println(runAlgorithmResponse)
+            }
+        }
     }
-
 }

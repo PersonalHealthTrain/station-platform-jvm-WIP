@@ -17,17 +17,17 @@ import javax.persistence.Entity
  *
  * @author Lukas Zimmermann
  */
-@Entity(name = "ProcessedTrain")
-data class ProcessedTrain(
+@Entity(name = "LocalTrain")
+data class LocalTrain(
 
         @EmbeddedId
-        val id: ProcessedTrainId,
+        val id: LocalTrainId,
 
         val state: TrainState
 ) {
 
         @Embeddable
-        data class ProcessedTrainId(
+        data class LocalTrainId(
 
                 @Column(name = "train_id", unique = false, nullable = false)
                 @Convert(converter = TrainIdConverter::class)

@@ -2,14 +2,14 @@ package de.difuture.ekut.pht.station.service
 
 import de.difuture.ekut.pht.lib.train.TrainId
 import de.difuture.ekut.pht.lib.train.TrainTag
-import de.difuture.ekut.pht.station.domain.ProcessedTrain
+import de.difuture.ekut.pht.station.domain.LocalTrain
 import de.difuture.ekut.pht.station.repository.ProcessedTrainRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 
 @Service
-class ProcessedTrainService
+class LocalTrainService
 @Autowired constructor(private val repo: ProcessedTrainRepository) {
 
     /**
@@ -19,13 +19,21 @@ class ProcessedTrainService
      */
     fun ensure(trainId: TrainId, trainTag: TrainTag) {
 
-        val processedTrainId = ProcessedTrain.ProcessedTrainId(trainId, trainTag)
+        val processedTrainId = LocalTrain.LocalTrainId(trainId, trainTag)
 
         if ( ! repo.findById(processedTrainId).isPresent) {
 
-            repo.save(ProcessedTrain(processedTrainId, ProcessedTrain.TrainState.BEFORE))
+            repo.save(LocalTrain(processedTrainId, LocalTrain.TrainState.BEFORE))
         }
     }
 
-    fun list() = repo.findAll()
+    /**
+     * Returns a train from the repository that can be processed
+     *
+     */
+    fun getTrainForProcessing() : LocalTrain? {
+
+        val beforeTrain = repo.findByState(LocalTrain.TrainState.BEFORE) ?: return null
+        return repo.save(beforeTrain.copy(state = LocalTrain.TrainState.PROCESSING))
+    }
 }

@@ -8,7 +8,7 @@ import java.net.URI
 @ConfigurationProperties(prefix = "station.registry")
 class StationRegistryProperties {
 
-    // The ProcessedTrain Registry that should be checked for new trains
+    // The LocalTrain Registry that should be checked for new trains
     lateinit var uri: URI
 
     lateinit var username: String

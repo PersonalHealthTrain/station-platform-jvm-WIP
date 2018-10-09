@@ -23,7 +23,9 @@ data class LocalTrain(
         @EmbeddedId
         val id: LocalTrainId,
 
-        val state: TrainState
+        val state: TrainState,
+
+        val reason: String
 ) {
 
         @Embeddable
@@ -42,6 +44,7 @@ data class LocalTrain(
 
                 BEFORE,
                 PROCESSING,
-                AFTER
+                SUCCESS,
+                FAILURE
         }
 }

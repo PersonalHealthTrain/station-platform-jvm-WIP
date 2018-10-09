@@ -8,7 +8,10 @@ station:
 
   resources:
     PHT_RESOURCE_FHIR_DSTU3: http://142.93.105.33:8080/baseDstu3
-    PHT_FILE_DOWNLOAD_SERVICE: http://file_download_service_0
+    PHT_FILE_DOWNLOAD_SERVICE: http://file_download_service_0:5000
+
+  docker:
+    networkId: 4456f8f585f6da8ef3d070cb5f2d7fe59092801f3fa0d35a34ce597b6c75e9d7
 
   registry:
     uri: http://134.2.9.126:5000

@@ -87,7 +87,6 @@ class TrainProcessor
                 val outputSupplier = RunAlgorithm.execArrival(trainArrival, docker, stationInfo)
 
                 // We are interested in both the DockerContainer Output and the RunAlgorithmResponse
-                val dockerContainerOutput = outputSupplier.output
                 val runAlgorithmResponse = outputSupplier.get()
 
                 println(runAlgorithmResponse)

@@ -23,7 +23,7 @@ class LocalTrainService
 
         if ( ! repo.findById(processedTrainId).isPresent) {
 
-            repo.save(LocalTrain(processedTrainId, LocalTrain.TrainState.BEFORE))
+            repo.save(LocalTrain(processedTrainId, LocalTrain.TrainState.BEFORE, "BEFORE"))
         }
     }
 

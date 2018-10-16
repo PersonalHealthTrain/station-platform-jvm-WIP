@@ -3,11 +3,13 @@ package de.difuture.ekut.pht.station.service
 import de.difuture.ekut.pht.lib.train.TrainTag
 import de.difuture.ekut.pht.lib.train.api.StationInfo
 import de.difuture.ekut.pht.lib.train.api.execution.docker.RunAlgorithm
+import de.difuture.ekut.pht.lib.train.api.interf.departure.DockerRegistryTrainDeparture
 import de.difuture.ekut.pht.lib.train.registry.DefaultTrainRegistryClient
 import de.difuture.ekut.pht.station.props.StationProperties
 import de.difuture.ekut.pht.station.props.StationRegistryProperties
 import jdregistry.client.api.DockerRegistryGetClient
 import jdregistry.client.auth.Authenticate
+import jdregistry.client.data.DockerRepositoryName
 import jdregistry.client.impl.http.spring.SpringHttpGetClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
@@ -84,12 +86,20 @@ class TrainProcessor
             // Execute the train arrival if exaclty one has been found
             if (trainArrival != null) {
 
-                val outputSupplier = RunAlgorithm.execArrival(trainArrival, docker, stationInfo)
+                val dockerTrainOutput = RunAlgorithm.execArrival(trainArrival, docker, stationInfo)
 
-                // We are interested in both the DockerContainer Output and the RunAlgorithmResponse
-                val runAlgorithmResponse = outputSupplier.get()
+                // If the response is successful, then create a new train Departure
+                val trainResponse = dockerTrainOutput.response
 
-                println(runAlgorithmResponse)
+                // If successful, use the Train Registry to publish the new image
+                if (trainResponse != null && trainResponse.success) {
+
+                    val containerId = dockerTrainOutput.containerOutput.containerId
+
+                    // Generate a new image for the train
+                    // val imageId = docker.commit(containerId, DockerRepositoryName() )
+
+                }
             }
         }
     }

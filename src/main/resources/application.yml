@@ -3,7 +3,7 @@ server:
 
 station:
 
-  name: station1
+  name: station0
   id: 0
 
   resources:

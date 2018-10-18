@@ -1,7 +1,7 @@
 package de.difuture.ekut.pht.station.service
 
-import de.difuture.ekut.pht.lib.train.TrainId
-import de.difuture.ekut.pht.lib.train.TrainTag
+import de.difuture.ekut.pht.lib.train.api.data.TrainId
+import de.difuture.ekut.pht.lib.train.api.data.TrainTag
 import de.difuture.ekut.pht.station.domain.LocalTrain
 import de.difuture.ekut.pht.station.repository.ProcessedTrainRepository
 import org.springframework.beans.factory.annotation.Autowired

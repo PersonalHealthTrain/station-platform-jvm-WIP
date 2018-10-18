@@ -1,9 +1,9 @@
 package de.difuture.ekut.pht.station.domain
 
-import de.difuture.ekut.pht.lib.train.TrainId
-import de.difuture.ekut.pht.lib.train.TrainTag
-import de.difuture.ekut.pht.lib.train.api.converter.TrainIdConverter
-import de.difuture.ekut.pht.lib.train.api.converter.TrainTagConverter
+import de.difuture.ekut.pht.lib.train.api.data.TrainId
+import de.difuture.ekut.pht.lib.train.api.data.TrainTag
+import de.difuture.ekut.pht.lib.train.api.data.converter.TrainIdConverter
+import de.difuture.ekut.pht.lib.train.api.data.converter.TrainTagConverter
 import java.io.Serializable
 import javax.persistence.Column
 import javax.persistence.Convert

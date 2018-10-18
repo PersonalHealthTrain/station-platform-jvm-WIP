@@ -1,15 +1,14 @@
 package de.difuture.ekut.pht.station.service
 
-import de.difuture.ekut.pht.lib.train.TrainTag
-import de.difuture.ekut.pht.lib.train.api.StationInfo
+import de.difuture.ekut.pht.lib.train.api.data.TrainTag
 import de.difuture.ekut.pht.lib.train.api.execution.docker.RunAlgorithm
-import de.difuture.ekut.pht.lib.train.api.interf.departure.DockerRegistryTrainDeparture
 import de.difuture.ekut.pht.lib.train.registry.DefaultTrainRegistryClient
+import de.difuture.ekut.pht.lib.train.station.DockerTrainStation
+import de.difuture.ekut.pht.lib.train.station.StationInfo
 import de.difuture.ekut.pht.station.props.StationProperties
 import de.difuture.ekut.pht.station.props.StationRegistryProperties
 import jdregistry.client.api.DockerRegistryGetClient
 import jdregistry.client.auth.Authenticate
-import jdregistry.client.data.DockerRepositoryName
 import jdregistry.client.impl.http.spring.SpringHttpGetClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
@@ -35,19 +34,12 @@ class TrainProcessor
                     Authenticate.with(registryProps.username,  registryProps.password)),
             namespace = registryProps.namespace)
 
-    /**
-     * The Docker Client that the Docker Registy uses
-     */
-    private val docker = clientProvider.getDockerClient()
+    private val client = clientProvider.getDockerClient()
+    private val stationInfo = StationInfo(props.id.toInt(), TrainTag.IMMEDIATE)
 
-
-    /**
-     * The station info that the station will communicate to the train.
-     * TODO Currently the train mode IMMEDIATE is always assumed
-     */
-    private val stationInfo = StationInfo(
-            props.id.toInt(), TrainTag.IMMEDIATE
-    )
+    private val station = DockerTrainStation(
+            client = this.client,
+            stationInfo = this.stationInfo)
 
     /**
      * Expected LocalTrain Tag. This station will execute all the train arrivals with the
@@ -79,27 +71,15 @@ class TrainProcessor
 
             val id = nextTrain.id
             // Find the corresponding train arrival again in the registy
-            val trainArrival = registry
-                    .listTrainArrivals {  it.trainId == id.trainId && it.trainTag == id.trainTag }
-                    .singleOrNull()
+            val trainArrival = registry.getTrainArrival(id.trainId, id.trainTag)
 
-            // Execute the train arrival if exaclty one has been found
             if (trainArrival != null) {
 
-                val dockerTrainOutput = RunAlgorithm.execArrival(trainArrival, docker, stationInfo)
+                // Create the Train Departure in the most straigtforward way possible
+                val trainDeparture = station.departWithAlgorithm(trainArrival)
 
-                // If the response is successful, then create a new train Departure
-                val trainResponse = dockerTrainOutput.response
-
-                // If successful, use the Train Registry to publish the new image
-                if (trainResponse != null && trainResponse.success) {
-
-                    val containerId = dockerTrainOutput.containerOutput.containerId
-
-                    // Generate a new image for the train
-                    // val imageId = docker.commit(containerId, DockerRepositoryName() )
-
-                }
+                // Submit the TrainDeparture to the Train Registry
+                this.registry.submitTrainDeparture(trainDeparture)
             }
         }
     }

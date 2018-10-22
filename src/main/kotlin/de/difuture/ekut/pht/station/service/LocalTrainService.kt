@@ -36,4 +36,6 @@ class LocalTrainService
         val beforeTrain = repo.findByState(LocalTrain.TrainState.BEFORE) ?: return null
         return repo.save(beforeTrain.copy(state = LocalTrain.TrainState.PROCESSING))
     }
+
+    fun success(train: LocalTrain) = repo.save(train.copy(state = LocalTrain.TrainState.SUCCESS))
 }

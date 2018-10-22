@@ -1,7 +1,6 @@
 package de.difuture.ekut.pht.station.service
 
 import de.difuture.ekut.pht.lib.train.api.data.TrainTag
-import de.difuture.ekut.pht.lib.train.api.execution.docker.RunAlgorithm
 import de.difuture.ekut.pht.lib.train.registry.DefaultTrainRegistryClient
 import de.difuture.ekut.pht.lib.train.station.DockerTrainStation
 import de.difuture.ekut.pht.lib.train.station.StationInfo
@@ -55,8 +54,10 @@ class TrainProcessor
     @Scheduled(fixedDelay = 5000)
     fun syncTrainArrivals() {
 
+        // We are interested in all train arrivals tag ends with the train tag
+        // that this station is interested in
         registry
-                .listTrainArrivals {it.trainTag == this.trainTag}
+                .listTrainArrivals {it.trainTag.repr.endsWith(this.trainTag.repr)}
                 .forEach { arrival ->
 
                     service.ensure(arrival.trainId, arrival.trainTag)
@@ -75,11 +76,18 @@ class TrainProcessor
 
             if (trainArrival != null) {
 
-                // Create the Train Departure in the most straigtforward way possible
+                // Create the Train Departure in the most straightforward way possible
+                // TODO Exception handling
                 val trainDeparture = station.departWithAlgorithm(trainArrival)
 
                 // Submit the TrainDeparture to the Train Registry
-                this.registry.submitTrainDeparture(trainDeparture)
+                val submitOk = this.registry.submitTrainDeparture(trainDeparture)
+
+                // If the submission is ok, then we set the train to done
+                if (submitOk) {
+
+                    this.service.success(nextTrain)
+                }
             }
         }
     }

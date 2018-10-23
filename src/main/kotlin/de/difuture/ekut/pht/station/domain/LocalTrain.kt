@@ -24,7 +24,6 @@ data class LocalTrain(
         val state: TrainState,
         val reason: String
 ) {
-
         @Embeddable
         data class LocalTrainId(
 

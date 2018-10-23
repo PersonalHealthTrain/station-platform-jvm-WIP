@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ProcessedTrainRepository : JpaRepository<LocalTrain, LocalTrain.LocalTrainId> {
 
-    fun findByState(state: LocalTrain.TrainState): LocalTrain?
+    fun findByState(state: LocalTrain.TrainState): List<LocalTrain>
 }

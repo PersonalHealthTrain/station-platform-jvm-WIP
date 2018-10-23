@@ -31,11 +31,12 @@ class LocalTrainService
      * Returns a train from the repository that can be processed
      *
      */
-    fun getTrainForProcessing() : LocalTrain? {
+    fun getTrainForProcessing() =
 
-        val beforeTrain = repo.findByState(LocalTrain.TrainState.BEFORE) ?: return null
-        return repo.save(beforeTrain.copy(state = LocalTrain.TrainState.PROCESSING))
-    }
+            repo.findByState(LocalTrain.TrainState.BEFORE).firstOrNull()?.let { localTrain ->
+
+                repo.save(localTrain.copy(state = LocalTrain.TrainState.PROCESSING))
+            }
 
     fun success(train: LocalTrain) = repo.save(train.copy(state = LocalTrain.TrainState.SUCCESS))
 }

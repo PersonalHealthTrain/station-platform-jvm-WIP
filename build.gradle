@@ -25,7 +25,7 @@ apply plugin: 'io.spring.dependency-management'
 
 
 group = 'de.difuture.ekut.pht'
-version = '0.0.2'
+version = '0.0.3'
 sourceCompatibility = 1.8
 
 
@@ -72,7 +72,7 @@ dependencies {
     compileOnly('org.springframework.boot:spring-boot-configuration-processor')
 
     // The PHT API and the Docker client implementation based on the Spotify client that we want to use
-    compile group: 'de.difuture.ekut.pht.lib', name: 'api-hibernate', version: '0.2.3'
+    compile group: 'de.difuture.ekut.pht.lib', name: 'api-hibernate', version: '0.2.4'
     compile group: 'de.difuture.ekut.pht.lib', name: 'runtime-docker-spotify', version: '0.1.3'
 
     // The HttpClient that we use for the Docker Registry

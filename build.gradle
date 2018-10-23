@@ -9,17 +9,17 @@ buildscript {
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
-		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
 	}
 }
 
 plugins {
-    id "org.jetbrains.kotlin.plugin.jpa" version "1.2.71"
+	id "org.jetbrains.kotlin.plugin.spring" version "1.2.71"
+	id "org.jetbrains.kotlin.plugin.jpa" version "1.2.71"
 }
 
 apply plugin: 'kotlin'
-apply plugin: 'kotlin-spring'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
@@ -27,6 +27,7 @@ apply plugin: 'io.spring.dependency-management'
 group = 'de.difuture.ekut.pht'
 version = '0.0.3'
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 
 compileKotlin {
@@ -58,25 +59,25 @@ dependencies {
 
     // This is required to make the Spotify Docker client work. see:
     // https://github.com/spotify/docker-client/issues/1030
-    compile group: 'org.glassfish.jersey.bundles.repackaged', name: 'jersey-guava', version: '2.25.1'
-    compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.27'
+    implementation group: 'org.glassfish.jersey.bundles.repackaged', name: 'jersey-guava', version: '2.25.1'
+	implementation group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.27'
 
     // Kotlin stuff
-    compile('com.fasterxml.jackson.module:jackson-module-kotlin')
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    compile("org.jetbrains.kotlin:kotlin-reflect")
+	implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
+	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // Spring stuff
-	compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
     compileOnly('org.springframework.boot:spring-boot-configuration-processor')
 
     // The PHT API and the Docker client implementation based on the Spotify client that we want to use
-    compile group: 'de.difuture.ekut.pht.lib', name: 'api-hibernate', version: '0.2.4'
-    compile group: 'de.difuture.ekut.pht.lib', name: 'runtime-docker-spotify', version: '0.1.3'
+    implementation group: 'de.difuture.ekut.pht.lib', name: 'api-hibernate', version: '0.2.4'
+    implementation group: 'de.difuture.ekut.pht.lib', name: 'runtime-docker-spotify', version: '0.1.3'
 
     // The HttpClient that we use for the Docker Registry
-    compile group: 'jdregistry.client', name: 'http-spring', version: '0.0.6'
+    implementation group: 'jdregistry.client', name: 'http-spring', version: '0.0.6'
 
     // Runtime dependency on H2
     runtime('com.h2database:h2')

@@ -11,10 +11,10 @@ station:
     PHT_FILE_DOWNLOAD_SERVICE: http://file_download_service_0:5000
 
   docker:
-    networkId: 3247ad7c77141254964be87e846ea09084e3710e7b779cffc298ee4e961834d0
+    network: file-download-iris_iris0
 
   registry:
-    uri: http://193.196.20.100:5000
+    uri: http://134.2.9.126:5000
     namespace: namespace
     username: admin
     password: adminpass

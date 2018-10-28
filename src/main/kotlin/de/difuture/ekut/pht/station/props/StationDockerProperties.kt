@@ -7,5 +7,5 @@ import org.springframework.context.annotation.Configuration
 @ConfigurationProperties(prefix = "station.docker")
 class StationDockerProperties {
 
-    lateinit var networkId: String
+    lateinit var network: String
 }

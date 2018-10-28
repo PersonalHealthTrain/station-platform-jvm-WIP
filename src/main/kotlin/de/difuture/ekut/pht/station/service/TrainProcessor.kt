@@ -7,7 +7,7 @@ import de.difuture.ekut.pht.lib.train.station.StationInfo
 import de.difuture.ekut.pht.station.props.StationProperties
 import de.difuture.ekut.pht.station.props.StationRegistryProperties
 import jdregistry.client.api.DockerRegistryGetClient
-import jdregistry.client.auth.Authenticate
+import jdregistry.client.api.auth.Authenticate
 import jdregistry.client.impl.http.spring.SpringHttpGetClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
@@ -59,7 +59,6 @@ class TrainProcessor
         registry
                 .listTrainArrivals {it.trainTag.repr.endsWith(this.trainTag.repr)}
                 .forEach { arrival ->
-
                     service.ensure(arrival.trainId, arrival.trainTag)
                 }
     }

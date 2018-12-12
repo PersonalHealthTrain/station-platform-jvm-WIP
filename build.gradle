@@ -1,7 +1,7 @@
 buildscript {
 	ext {
-		kotlinVersion = '1.2.71'
-		springBootVersion = '2.0.6.RELEASE'
+		kotlinVersion = '1.3.11'
+		springBootVersion = '2.1.1.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -9,23 +9,26 @@ buildscript {
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+		classpath("org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}")
 	}
 }
 
 plugins {
-	id "org.jetbrains.kotlin.plugin.spring" version "1.2.71"
-	id "org.jetbrains.kotlin.plugin.jpa" version "1.2.71"
+	id "org.jetbrains.kotlin.plugin.spring" version "1.3.11"
+	id "org.jetbrains.kotlin.plugin.jpa" version "1.3.11"
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'kotlin-spring'
+apply plugin: 'kotlin-jpa'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-
-group = 'de.difuture.ekut.pht'
-version = '0.0.4'
+group = 'de.difuture.ekut.pht.station'
+version = '1.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -36,6 +39,7 @@ compileKotlin {
 		jvmTarget = "1.8"
 	}
 }
+
 compileTestKotlin {
 	kotlinOptions {
 		freeCompilerArgs = ["-Xjsr305=strict"]
@@ -52,6 +56,10 @@ repositories {
 	// That is where the JDregistry is currently hosted
 	maven {
 		url  "https://dl.bintray.com/lukaszimmermann/jdregistry"
+	}
+	// Additional Kotlin extensions
+	maven {
+		url  "https://dl.bintray.com/lukaszimmermann/lukaszimmermann"
 	}
 }
 
@@ -72,9 +80,8 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
     compileOnly('org.springframework.boot:spring-boot-configuration-processor')
 
-    // The PHT API and the Docker client implementation based on the Spotify client that we want to use
-    implementation group: 'de.difuture.ekut.pht.lib', name: 'api-hibernate', version: '0.2.6'
-    implementation group: 'de.difuture.ekut.pht.lib', name: 'runtime-docker-spotify', version: '0.2.0'
+    // The PHT library
+    implementation group: 'de.difuture.ekut.pht', name: 'lib', version: '1.1'
 
     // The HttpClient that we use for the Docker Registry
     implementation group: 'jdregistry.client', name: 'http-spring', version: '0.0.6'

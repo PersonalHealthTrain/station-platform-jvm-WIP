@@ -1,9 +1,9 @@
 package de.difuture.ekut.pht.station.service
 
-import de.difuture.ekut.pht.lib.runtime.docker.DockerRuntimeClient
-import de.difuture.ekut.pht.lib.runtime.docker.params.DockerRunOptionalParameters
-import de.difuture.ekut.pht.lib.runtime.docker.spotify.SpotifyDockerClient
-import de.difuture.ekut.pht.lib.runtime.docker.withDefaultRunParameters
+import de.difuture.ekut.pht.lib.runtime.api.docker.DockerRuntimeClient
+import de.difuture.ekut.pht.lib.runtime.api.docker.data.DockerRunOptionalParameters
+import de.difuture.ekut.pht.lib.runtime.api.docker.withDefaultRunParameters
+import de.difuture.ekut.pht.lib.runtime.impl.SpotifyDockerClient
 import de.difuture.ekut.pht.station.props.StationDockerProperties
 import de.difuture.ekut.pht.station.props.StationProperties
 import de.difuture.ekut.pht.station.props.StationRegistryProperties

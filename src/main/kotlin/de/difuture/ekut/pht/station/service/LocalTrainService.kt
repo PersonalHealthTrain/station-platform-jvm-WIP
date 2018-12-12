@@ -1,7 +1,7 @@
 package de.difuture.ekut.pht.station.service
 
-import de.difuture.ekut.pht.lib.train.api.data.TrainId
-import de.difuture.ekut.pht.lib.train.api.data.TrainTag
+import de.difuture.ekut.pht.lib.data.TrainName
+import de.difuture.ekut.pht.lib.data.TrainTag
 import de.difuture.ekut.pht.station.domain.LocalTrain
 import de.difuture.ekut.pht.station.repository.ProcessedTrainRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +17,7 @@ class LocalTrainService
      * If the train does not exist, it will be created with the BEFORE State
      *
      */
-    fun ensure(trainId: TrainId, trainTag: TrainTag) {
+    fun ensure(trainId: TrainName, trainTag: TrainTag) {
 
         val processedTrainId = LocalTrain.LocalTrainId(trainId, trainTag)
 

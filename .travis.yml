@@ -1,9 +1,6 @@
 sudo: required
-
 language: java
-
 services:
   - docker
-
 before_install:
-  - gradle clean
+  - ./gradlew clean

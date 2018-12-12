@@ -1,9 +1,9 @@
 package de.difuture.ekut.pht.station.service
 
-import de.difuture.ekut.pht.lib.train.api.data.TrainTag
-import de.difuture.ekut.pht.lib.train.registry.DefaultTrainRegistryClient
+import de.difuture.ekut.pht.lib.data.toTrainTag
+import de.difuture.ekut.pht.lib.train.api.StationInfo
+import de.difuture.ekut.pht.lib.train.registry.impl.DefaultTrainRegistryClient
 import de.difuture.ekut.pht.lib.train.station.DockerTrainStation
-import de.difuture.ekut.pht.lib.train.station.StationInfo
 import de.difuture.ekut.pht.station.props.StationProperties
 import de.difuture.ekut.pht.station.props.StationRegistryProperties
 import jdregistry.client.api.DockerRegistryGetClient
@@ -34,7 +34,7 @@ class TrainProcessor
             namespace = registryProps.namespace)
 
     private val client = clientProvider.getDockerClient()
-    private val stationInfo = StationInfo(props.id.toInt(), TrainTag.IMMEDIATE)
+    private val stationInfo = StationInfo(props.id.toInt(), "immediate")
 
     private val station = DockerTrainStation(
             client = this.client,
@@ -44,7 +44,7 @@ class TrainProcessor
      * Expected LocalTrain Tag. This station will execute all the train arrivals with the
      * designated train tag
      */
-    private val trainTag = TrainTag.of("station.${props.id}")
+    private val trainTag = "station.${props.id}".toTrainTag()
 
 
     /**
@@ -59,7 +59,7 @@ class TrainProcessor
         registry
                 .listTrainArrivals {it.trainTag.repr.endsWith(this.trainTag.repr)}
                 .forEach { arrival ->
-                    service.ensure(arrival.trainId, arrival.trainTag)
+                    service.ensure(arrival.trainName, arrival.trainTag)
                 }
     }
 
@@ -71,7 +71,7 @@ class TrainProcessor
 
             val id = nextTrain.id
             // Find the corresponding train arrival again in the registy
-            val trainArrival = registry.getTrainArrival(id.trainId, id.trainTag)
+            val trainArrival = registry.getTrainArrival(id.trainName, id.trainTag)
 
             if (trainArrival != null) {
 

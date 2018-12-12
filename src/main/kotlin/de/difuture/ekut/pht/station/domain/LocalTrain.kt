@@ -1,9 +1,9 @@
 package de.difuture.ekut.pht.station.domain
 
-import de.difuture.ekut.pht.lib.train.api.data.TrainId
-import de.difuture.ekut.pht.lib.train.api.data.TrainTag
-import de.difuture.ekut.pht.lib.train.api.data.converter.TrainIdConverter
-import de.difuture.ekut.pht.lib.train.api.data.converter.TrainTagConverter
+import de.difuture.ekut.pht.lib.data.TrainName
+import de.difuture.ekut.pht.lib.data.TrainTag
+import de.difuture.ekut.pht.lib.jpa.TrainNameConverter
+import de.difuture.ekut.pht.lib.jpa.TrainTagConverter
 import java.io.Serializable
 import javax.persistence.Column
 import javax.persistence.Convert
@@ -28,8 +28,8 @@ data class LocalTrain(
         data class LocalTrainId(
 
                 @Column(name = "train_id", unique = false, nullable = false)
-                @Convert(converter = TrainIdConverter::class)
-                val trainId: TrainId,
+                @Convert(converter = TrainNameConverter::class)
+                val trainName: TrainName,
 
                 @Column(name = "train_tag", unique = false, nullable = false)
                 @Convert(converter = TrainTagConverter::class)

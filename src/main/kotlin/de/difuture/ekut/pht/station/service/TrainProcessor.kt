@@ -1,9 +1,9 @@
 package de.difuture.ekut.pht.station.service
 
 import de.difuture.ekut.pht.lib.data.toTrainTag
-import de.difuture.ekut.pht.lib.train.api.StationInfo
+import de.difuture.ekut.pht.lib.train.api.StationRuntimeInfo
 import de.difuture.ekut.pht.lib.train.registry.impl.DefaultTrainRegistryClient
-import de.difuture.ekut.pht.lib.train.station.DockerTrainStation
+import de.difuture.ekut.pht.lib.train.station.SimpleDockerPlatform
 import de.difuture.ekut.pht.station.props.StationProperties
 import de.difuture.ekut.pht.station.props.StationRegistryProperties
 import jdregistry.client.api.DockerRegistryGetClient
@@ -34,9 +34,9 @@ class TrainProcessor
             namespace = registryProps.namespace)
 
     private val client = clientProvider.getDockerClient()
-    private val stationInfo = StationInfo(props.id.toInt(), "immediate")
+    private val stationInfo = StationRuntimeInfo(props.id.toInt())
 
-    private val station = DockerTrainStation(
+    private val station = SimpleDockerPlatform(
             client = this.client,
             stationInfo = this.stationInfo)
 
@@ -79,12 +79,12 @@ class TrainProcessor
                 // TODO Exception handling
                 val trainDeparture = station.departWithAlgorithm(trainArrival)
 
+                // TODO Sentinel service
                 // Submit the TrainDeparture to the Train Registry
                 val submitOk = this.registry.submitTrainDeparture(trainDeparture)
 
                 // If the submission is ok, then we set the train to done
                 if (submitOk) {
-
                     this.service.success(nextTrain)
                 }
             }

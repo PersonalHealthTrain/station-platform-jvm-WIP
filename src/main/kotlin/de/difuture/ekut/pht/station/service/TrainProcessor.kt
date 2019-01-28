@@ -62,7 +62,7 @@ class TrainProcessor
                 .forEach { arrival ->
                     val trainName = arrival.trainName
                     val trainTag = arrival.trainTag
-                    println("Platform sees Arrival: Name=$trainName, Tag=$trainTag")
+                    println("Platform: Sees Arrival: Name=${trainName.repr}, Tag=${trainTag.repr}")
                     service.ensure(trainName, trainTag)
                 }
     }
@@ -73,12 +73,13 @@ class TrainProcessor
         val nextTrain = service.getTrainForProcessing()
         if (nextTrain != null) {
 
+            println("Platform: Starting to process Local Train: ${nextTrain.id}")
+
             val id = nextTrain.id
             // Find the corresponding train arrival again in the registy
             val trainArrival = registry.getTrainArrival(id.trainName, id.trainTag)
-
             if (trainArrival != null) {
-
+                println("Platform: Train Arrival for Local Train ${trainArrival.trainName.repr}")
                 // Create the Train Departure in the most straightforward way possible
                 // TODO Exception handling
                 val trainDeparture = station.departWithAlgorithm(trainArrival)
@@ -91,6 +92,9 @@ class TrainProcessor
                 if (submitOk) {
                     this.service.success(nextTrain)
                 }
+            }
+            else {
+                println("Platform: Train Arrival for train $id could  not be received!")
             }
         }
     }

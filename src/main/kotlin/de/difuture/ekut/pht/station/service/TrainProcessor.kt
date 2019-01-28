@@ -56,10 +56,14 @@ class TrainProcessor
 
         // We are interested in all train arrivals tag ends with the train tag
         // that this station is interested in
+        println("Platform: Starting to scan for new Train Arrivals")
         registry
                 .listTrainArrivals {it.trainTag.repr.endsWith(this.trainTag.repr)}
                 .forEach { arrival ->
-                    service.ensure(arrival.trainName, arrival.trainTag)
+                    val trainName = arrival.trainName
+                    val trainTag = arrival.trainTag
+                    println("Platform sees Arrival: Name=$trainName, Tag=$trainTag")
+                    service.ensure(trainName, trainTag)
                 }
     }
 

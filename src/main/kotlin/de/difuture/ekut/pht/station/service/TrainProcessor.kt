@@ -79,7 +79,7 @@ class TrainProcessor
             // Find the corresponding train arrival again in the registy
             val trainArrival = registry.getTrainArrival(id.trainName, id.trainTag)
             if (trainArrival != null) {
-                println("Platform: Train Arrival for Local Train ${trainArrival.trainName.repr}")
+                println("Platform: Train Arrival for Local Train $trainArrival")
                 // Create the Train Departure in the most straightforward way possible
                 // TODO Exception handling
                 val trainDeparture = station.departWithAlgorithm(trainArrival)

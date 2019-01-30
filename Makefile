@@ -1,4 +1,3 @@
 .PHONY: all
 all:
-	docker build --no-cache --pull --rm -t personalhealthtrain/station-platform:latest .
-	docker tag personalhealthtrain/station-platform:latest personalhealthtrain/station-platform:0.9.2
+	docker build --no-cache --pull --rm -t personalhealthtrain/station-platform:1.0.0 .
